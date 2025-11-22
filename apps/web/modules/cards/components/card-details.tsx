@@ -48,7 +48,7 @@ export function CardDetails({ cardData }: CardDetailsProps) {
   };
 
   return (
-    <Card className="overflow-hidden p-4">
+    <Card className="overflow-hidden p-4 max-w-md">
       <div className="border p-4">
         <div className="mb-10 py-4">
           <p className="text-lg font-mono tracking-wider">

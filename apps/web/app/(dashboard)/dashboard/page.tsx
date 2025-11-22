@@ -6,13 +6,14 @@ import {
 } from "@repo/ui/components/card";
 import { listVirtualCards } from "@/actions/card-actions";
 import { getTransactionStats } from "@/actions/transaction-actions";
+import CardOverview from "@/modules/cards/components/card-overview";
 
 export default async function DashboardPage() {
   const stats = await getTransactionStats();
   const cards = await listVirtualCards();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">
@@ -61,6 +62,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+      <CardOverview />
     </div>
   );
 }
