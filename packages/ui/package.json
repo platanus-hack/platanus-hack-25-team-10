@@ -69,7 +69,6 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
-    "./components/sidebar": "./src/components/sidebar.tsx",
     "./hooks/*": "./src/hooks/*.ts"
   }
 }
