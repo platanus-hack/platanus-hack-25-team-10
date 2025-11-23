@@ -1,6 +1,6 @@
 # Shadow
 
-**Current project logo:** project-logo.png
+**Current project logo:** logo-dark.png
 
 <img src="./logo-dark.png" alt="Project Logo" width="200" />
 
