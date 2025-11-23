@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserPaymentMethod } from "@/modules/cards/actions/payment-method-actions";
@@ -13,6 +14,15 @@ import {
   CardTitle,
 } from "@/modules/shared/components/ui/card";
 import { auth } from "@/modules/shared/lib/auth";
+
+export const metadata: Metadata = {
+  title: "Payment Methods",
+  description: "Manage your payment methods to fund virtual card purchases.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function PersonalCardPage() {
   const session = await auth.api.getSession({ headers: await headers() });

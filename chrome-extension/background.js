@@ -1,13 +1,13 @@
 // Background Service Worker para Shadow Virtual Cards
-console.log('🔧 Background worker cargado!');
+console.log("🔧 Background worker cargado!");
 
-const API_BASE_URL = 'https://shadow.commet.co/api/extension';
+const API_BASE_URL = "https://shadow.commet.co/api/extension";
 
 // Estado de autenticación (se guarda en chrome.storage.local)
-let authState = {
+const authState = {
   token: null,
   user: null,
-  isAuthenticated: false
+  isAuthenticated: false,
 };
 
 // Inicializar: Cargar token guardado al iniciar
@@ -22,15 +22,15 @@ chrome.runtime.onInstalled.addListener(async () => {
 // Cargar estado de autenticación desde storage
 async function loadAuthState() {
   try {
-    const result = await chrome.storage.local.get(['authToken', 'authUser']);
+    const result = await chrome.storage.local.get(["authToken", "authUser"]);
     if (result.authToken && result.authUser) {
       authState.token = result.authToken;
       authState.user = result.authUser;
       authState.isAuthenticated = true;
-      console.log('✓ Sesión restaurada:', authState.user.email);
+      console.log("✓ Sesión restaurada:", authState.user.email);
     }
   } catch (error) {
-    console.error('Error cargando auth state:', error);
+    console.error("Error cargando auth state:", error);
   }
 }
 
@@ -39,10 +39,10 @@ async function saveAuthState() {
   try {
     await chrome.storage.local.set({
       authToken: authState.token,
-      authUser: authState.user
+      authUser: authState.user,
     });
   } catch (error) {
-    console.error('Error guardando auth state:', error);
+    console.error("Error guardando auth state:", error);
   }
 }
 
@@ -50,9 +50,9 @@ async function saveAuthState() {
 async function login(email, password) {
   try {
     const response = await fetch(`${API_BASE_URL}/auth`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
@@ -60,7 +60,7 @@ async function login(email, password) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Login failed');
+      throw new Error(data.error || "Login failed");
     }
 
     // Guardar token y usuario
@@ -70,10 +70,10 @@ async function login(email, password) {
 
     await saveAuthState();
 
-    console.log('✓ Login exitoso:', data.user.email);
+    console.log("✓ Login exitoso:", data.user.email);
     return { success: true, user: data.user };
   } catch (error) {
-    console.error('❌ Login error:', error);
+    console.error("❌ Login error:", error);
     return { success: false, error: error.message };
   }
 }
@@ -84,9 +84,9 @@ async function logout() {
   authState.user = null;
   authState.isAuthenticated = false;
 
-  await chrome.storage.local.remove(['authToken', 'authUser']);
-  console.log('✓ Logout exitoso');
-  
+  await chrome.storage.local.remove(["authToken", "authUser"]);
+  console.log("✓ Logout exitoso");
+
   return { success: true };
 }
 
@@ -103,13 +103,13 @@ async function checkAuth() {
   // Verificar que el token siga siendo válido
   try {
     const response = await fetch(`${API_BASE_URL}/auth`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
-        action: 'verify',
-        token: authState.token 
+      body: JSON.stringify({
+        action: "verify",
+        token: authState.token,
       }),
     });
 
@@ -121,12 +121,12 @@ async function checkAuth() {
       return { isAuthenticated: false };
     }
 
-    return { 
-      isAuthenticated: true, 
-      user: authState.user 
+    return {
+      isAuthenticated: true,
+      user: authState.user,
     };
   } catch (error) {
-    console.error('Error verificando auth:', error);
+    console.error("Error verificando auth:", error);
     return { isAuthenticated: false };
   }
 }
@@ -135,15 +135,15 @@ async function checkAuth() {
 async function createCard(domain) {
   try {
     if (!authState.isAuthenticated || !authState.token) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     console.log(`🎴 Creando tarjeta para: ${domain}`);
 
     const response = await fetch(`${API_BASE_URL}/cards/create`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name: domain,
@@ -155,15 +155,15 @@ async function createCard(domain) {
 
     if (!response.ok) {
       if (data.needsOnboarding) {
-        throw new Error('Necesitas completar el onboarding en shadow-v2');
+        throw new Error("Necesitas completar el onboarding en shadow-v2");
       }
-      throw new Error(data.error || 'Failed to create card');
+      throw new Error(data.error || "Failed to create card");
     }
 
-    console.log('✓ Tarjeta creada exitosamente:', data.card.last4);
+    console.log("✓ Tarjeta creada exitosamente:", data.card.last4);
     return { success: true, card: data.card };
   } catch (error) {
-    console.error('❌ Error creando tarjeta:', error);
+    console.error("❌ Error creando tarjeta:", error);
     return { success: false, error: error.message };
   }
 }
@@ -172,66 +172,71 @@ async function createCard(domain) {
 async function listCards() {
   try {
     if (!authState.isAuthenticated || !authState.token) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const response = await fetch(`${API_BASE_URL}/cards`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Authorization': `Bearer ${authState.token}`,
+        Authorization: `Bearer ${authState.token}`,
       },
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to fetch cards');
+      throw new Error(data.error || "Failed to fetch cards");
     }
 
     return { success: true, cards: data.cards };
   } catch (error) {
-    console.error('Error listando tarjetas:', error);
+    console.error("Error listando tarjetas:", error);
     return { success: false, error: error.message };
   }
 }
 
 // Escuchar mensajes desde content.js o popup.js
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('📨 Mensaje recibido:', message.action);
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  console.log("📨 Mensaje recibido:", message.action);
 
   (async () => {
     try {
       switch (message.action) {
-        case 'login':
+        case "login": {
           const loginResult = await login(message.email, message.password);
           sendResponse(loginResult);
           break;
+        }
 
-        case 'logout':
+        case "logout": {
           const logoutResult = await logout();
           sendResponse(logoutResult);
           break;
+        }
 
-        case 'checkAuth':
+        case "checkAuth": {
           const authResult = await checkAuth();
           sendResponse(authResult);
           break;
+        }
 
-        case 'createAndFill':
+        case "createAndFill": {
           const cardResult = await createCard(message.domain);
           sendResponse(cardResult);
           break;
+        }
 
-        case 'listCards':
+        case "listCards": {
           const listResult = await listCards();
           sendResponse(listResult);
           break;
+        }
 
         default:
-          sendResponse({ success: false, error: 'Unknown action' });
+          sendResponse({ success: false, error: "Unknown action" });
       }
     } catch (error) {
-      console.error('Error en mensaje:', error);
+      console.error("Error en mensaje:", error);
       sendResponse({ success: false, error: error.message });
     }
   })();
@@ -239,4 +244,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Mantener el canal abierto para respuesta asíncrona
   return true;
 });
-

@@ -89,7 +89,9 @@ export default function SignUp() {
                   },
                   onError: (ctx) => {
                     toast.error("Error creating account", {
-                      description: ctx.error.message || "Please check your information and try again",
+                      description:
+                        ctx.error.message ||
+                        "Please check your information and try again",
                     });
                   },
                   onSuccess: async () => {

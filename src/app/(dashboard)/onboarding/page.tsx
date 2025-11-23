@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { paymentMethod, user } from "@/db/schema";
 import { OnboardingContent } from "@/modules/onboarding/onboarding-content";
-import { auth } from "@/modules/shared/lib/auth";
 import { AdminContainer } from "@/modules/shared/components/admin-container";
+import { auth } from "@/modules/shared/lib/auth";
 
 export default async function OnboardingPage() {
   const session = await auth.api.getSession({ headers: await headers() });

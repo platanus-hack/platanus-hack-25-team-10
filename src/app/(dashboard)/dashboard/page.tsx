@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import SimpleCardView from "@/modules/dashboard/components/simple-card-view";
 import {
   getTotalSpent,
@@ -6,6 +7,16 @@ import {
 import { AdminContainer } from "@/modules/shared/components/admin-container";
 import { Card, CardContent } from "@/modules/shared/components/ui/card";
 import { RecentTransactions } from "@/modules/transactions/recent-transactions";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description:
+    "View your spending overview, virtual cards, and recent transactions.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function DashboardPage() {
   const [totalSpent, recentTransactions] = await Promise.all([

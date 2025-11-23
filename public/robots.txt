@@ -1,0 +1,15 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private/authenticated pages
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /cards
+Disallow: /transactions
+Disallow: /virtual-cards
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://shadow.commet.co/sitemap.xml
+

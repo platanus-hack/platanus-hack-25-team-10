@@ -19,11 +19,13 @@
       "recommended": true,
       "a11y": {
         "useSemanticElements": "off",
-        "useFocusableInteractive": "off"
+        "useFocusableInteractive": "off",
+        "noSvgWithoutTitle": "off"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
-        "noDocumentCookie": "off"
+        "noDocumentCookie": "off",
+        "useIterableCallbackReturn": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"

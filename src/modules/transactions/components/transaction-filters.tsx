@@ -1,6 +1,7 @@
 "use client";
 
 import { parseAsString, useQueryState } from "nuqs";
+import type { VirtualCard } from "@/db/schema";
 import {
   Select,
   SelectContent,
@@ -8,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/modules/shared/components/ui/select";
-import type { VirtualCard } from "@/db/schema";
 
 interface TransactionFiltersProps {
   cards: VirtualCard[];

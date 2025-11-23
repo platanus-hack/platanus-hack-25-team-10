@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense } from "react";
+import type { Transaction, VirtualCard } from "@/db/schema";
 import { TransactionFilters } from "./transaction-filters";
 import { TransactionsTable } from "./transactions-table";
-import type { Transaction, VirtualCard } from "@/db/schema";
 
 interface TransactionsContentProps {
   transactions: (Transaction & { virtualCard: VirtualCard })[];
@@ -43,4 +43,3 @@ export function TransactionsContent(props: TransactionsContentProps) {
     </Suspense>
   );
 }
-

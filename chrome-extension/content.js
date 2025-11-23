@@ -1,17 +1,17 @@
 // Extension para autocompletar tarjetas de crédito (Shadow Virtual Cards)
-console.log('💳 Shadow Virtual Cards cargada!');
+console.log("💳 Shadow Virtual Cards cargada!");
 
 let botonesActivos = [];
 let menuActivo = null;
-let inputActual = null;
+let _inputActual = null;
 
-document.addEventListener('click', (event) => {
+document.addEventListener("click", (event) => {
   const target = event.target;
-  
-  if (target.tagName === 'INPUT') {
+
+  if (target.tagName === "INPUT") {
     const tipo = detectarTipoCampo(target);
-    if (tipo === 'numero') {
-      inputActual = target;
+    if (tipo === "numero") {
+      _inputActual = target;
       mostrarMenuTarjetas(target);
     } else {
       ocultarBotones();
@@ -22,27 +22,27 @@ document.addEventListener('click', (event) => {
 });
 
 function detectarTipoCampo(input) {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const placeholder = (input.placeholder || '').toLowerCase();
-  const autocomplete = (input.autocomplete || '').toLowerCase();
+  const name = (input.name || "").toLowerCase();
+  const id = (input.id || "").toLowerCase();
+  const placeholder = (input.placeholder || "").toLowerCase();
+  const autocomplete = (input.autocomplete || "").toLowerCase();
   const texto = `${name} ${id} ${placeholder} ${autocomplete}`;
-  
+
   // Detectar número de tarjeta
   if (texto.match(/card.*number|cardnumber|cc.*number|number|card|ccnumber/)) {
-    return 'numero';
+    return "numero";
   }
-  
-  return 'desconocido';
+
+  return "desconocido";
 }
 
 async function mostrarMenuTarjetas(inputNumero) {
   ocultarBotones();
-  
+
   const rect = inputNumero.getBoundingClientRect();
-  
+
   // Crear menú contenedor
-  const menu = document.createElement('div');
+  const menu = document.createElement("div");
   menu.style.cssText = `
     position: absolute;
     background: #ffffff;
@@ -56,9 +56,9 @@ async function mostrarMenuTarjetas(inputNumero) {
     overflow-y: auto;
     border: 1px solid #e5e5e5;
   `;
-  
+
   // Agregar estilos para scrollbar
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
     .shadow-cards-menu::-webkit-scrollbar {
       width: 6px;
@@ -73,15 +73,15 @@ async function mostrarMenuTarjetas(inputNumero) {
       background: #b5b5b5;
     }
   `;
-  if (!document.querySelector('#shadow-cards-style')) {
-    style.id = 'shadow-cards-style';
+  if (!document.querySelector("#shadow-cards-style")) {
+    style.id = "shadow-cards-style";
     document.head.appendChild(style);
   }
-  menu.classList.add('shadow-cards-menu');
-  
-  menu.style.left = rect.left + window.scrollX + 'px';
-  menu.style.top = rect.bottom + window.scrollY + 8 + 'px';
-  
+  menu.classList.add("shadow-cards-menu");
+
+  menu.style.left = `${rect.left + window.scrollX}px`;
+  menu.style.top = `${rect.bottom + window.scrollY + 8}px`;
+
   // Mostrar loading mientras carga
   menu.innerHTML = `
     <div style="padding: 20px; text-align: center; color: #666;">
@@ -89,24 +89,24 @@ async function mostrarMenuTarjetas(inputNumero) {
       Loading cards...
     </div>
   `;
-  
+
   document.body.appendChild(menu);
   menuActivo = menu;
   botonesActivos.push(menu);
-  
+
   try {
     // Obtener tarjetas del usuario
-    const response = await chrome.runtime.sendMessage({ action: 'listCards' });
-    
+    const response = await chrome.runtime.sendMessage({ action: "listCards" });
+
     if (!response.success) {
-      throw new Error(response.error || 'Error al cargar tarjetas');
+      throw new Error(response.error || "Error al cargar tarjetas");
     }
-    
+
     const cards = response.cards || [];
-    
+
     // Limpiar menu
-    menu.innerHTML = '';
-    
+    menu.innerHTML = "";
+
     // Si hay tarjetas, mostrarlas
     if (cards.length > 0) {
       cards.forEach((card) => {
@@ -114,13 +114,12 @@ async function mostrarMenuTarjetas(inputNumero) {
         menu.appendChild(cardItem);
       });
     }
-    
+
     // Botón de crear nueva tarjeta
     const crearBtn = crearBotonCrearTarjeta();
     menu.appendChild(crearBtn);
-    
   } catch (error) {
-    console.error('Error cargando tarjetas:', error);
+    console.error("Error cargando tarjetas:", error);
     menu.innerHTML = `
       <div style="padding: 16px; text-align: center; color: #d32f2f; font-size: 13px;">
         ❌ Error loading cards
@@ -130,7 +129,7 @@ async function mostrarMenuTarjetas(inputNumero) {
 }
 
 function crearItemTarjeta(card) {
-  const item = document.createElement('div');
+  const item = document.createElement("div");
   item.style.cssText = `
     padding: 12px;
     cursor: pointer;
@@ -141,12 +140,15 @@ function crearItemTarjeta(card) {
     background: #fafafa;
     margin: 4px 0;
   `;
-  
+
   // Detectar tipo de tarjeta (Visa, Mastercard, etc.)
-  const brand = card.brand || 'card';
-  const brandEmoji = brand.toLowerCase().includes('visa') ? '💳' : 
-                     brand.toLowerCase().includes('master') ? '💳' : '💳';
-  
+  const brand = card.brand || "card";
+  const brandEmoji = brand.toLowerCase().includes("visa")
+    ? "💳"
+    : brand.toLowerCase().includes("master")
+      ? "💳"
+      : "💳";
+
   item.innerHTML = `
     <div style="
       width: 40px;
@@ -168,7 +170,7 @@ function crearItemTarjeta(card) {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-      ">${card.name || 'Card'}</div>
+      ">${card.name || "Card"}</div>
       <div style="
         font-size: 13px;
         color: #666;
@@ -176,27 +178,27 @@ function crearItemTarjeta(card) {
       ">•••• •••• •••• ${card.last4}</div>
     </div>
   `;
-  
-  item.addEventListener('mouseenter', () => {
-    item.style.background = '#f0f0f0';
-    item.style.transform = 'translateX(2px)';
+
+  item.addEventListener("mouseenter", () => {
+    item.style.background = "#f0f0f0";
+    item.style.transform = "translateX(2px)";
   });
-  
-  item.addEventListener('mouseleave', () => {
-    item.style.background = '#fafafa';
-    item.style.transform = 'translateX(0)';
+
+  item.addEventListener("mouseleave", () => {
+    item.style.background = "#fafafa";
+    item.style.transform = "translateX(0)";
   });
-  
-  item.addEventListener('click', async (e) => {
+
+  item.addEventListener("click", async (e) => {
     e.stopPropagation();
     await autocompletarTarjeta(card);
   });
-  
+
   return item;
 }
 
 function crearBotonCrearTarjeta() {
-  const boton = document.createElement('div');
+  const boton = document.createElement("div");
   boton.style.cssText = `
     padding: 12px;
     cursor: pointer;
@@ -208,7 +210,7 @@ function crearBotonCrearTarjeta() {
     margin-top: 4px;
     border: 1px dashed #d5d5d5;
   `;
-  
+
   boton.innerHTML = `
     <div style="
       width: 40px;
@@ -233,35 +235,35 @@ function crearBotonCrearTarjeta() {
       ">For ${window.location.hostname}</div>
     </div>
   `;
-  
-  boton.addEventListener('mouseenter', () => {
-    boton.style.background = '#f0f0f0';
-    boton.style.borderColor = '#b5b5b5';
-    boton.style.transform = 'translateX(2px)';
+
+  boton.addEventListener("mouseenter", () => {
+    boton.style.background = "#f0f0f0";
+    boton.style.borderColor = "#b5b5b5";
+    boton.style.transform = "translateX(2px)";
   });
-  
-  boton.addEventListener('mouseleave', () => {
-    boton.style.background = '#fafafa';
-    boton.style.borderColor = '#d5d5d5';
-    boton.style.transform = 'translateX(0)';
+
+  boton.addEventListener("mouseleave", () => {
+    boton.style.background = "#fafafa";
+    boton.style.borderColor = "#d5d5d5";
+    boton.style.transform = "translateX(0)";
   });
-  
-  boton.addEventListener('click', async (e) => {
+
+  boton.addEventListener("click", async (e) => {
     e.stopPropagation();
     await crearYAutocompletarNuevaTarjeta(boton);
   });
-  
+
   return boton;
 }
 
 async function autocompletarTarjeta(card) {
   try {
     // Completar campos con la tarjeta existente
-    completarCampo('numero', card.number);
-    completarCampo('nombre', card.cardholder_name || card.name);
-    completarCampo('expiracion', card.expiration);
-    completarCampo('cvv', card.cvv);
-    
+    completarCampo("numero", card.number);
+    completarCampo("nombre", card.cardholder_name || card.name);
+    completarCampo("expiracion", card.expiration);
+    completarCampo("cvv", card.cvv);
+
     // Feedback visual
     if (menuActivo) {
       menuActivo.innerHTML = `
@@ -270,13 +272,13 @@ async function autocompletarTarjeta(card) {
           <div style="font-size: 14px; font-weight: 500;">Card filled!</div>
         </div>
       `;
-      
+
       setTimeout(() => {
         ocultarBotones();
       }, 1000);
     }
   } catch (error) {
-    console.error('Error autocompletando:', error);
+    console.error("Error autocompletando:", error);
   }
 }
 
@@ -303,28 +305,28 @@ async function crearYAutocompletarNuevaTarjeta(botonElement) {
         ">Creating card...</div>
       </div>
     `;
-    botonElement.style.cursor = 'wait';
-    
+    botonElement.style.cursor = "wait";
+
     const domain = window.location.hostname;
-    
+
     // Crear tarjeta
     const response = await chrome.runtime.sendMessage({
-      action: 'createAndFill',
-      domain: domain
+      action: "createAndFill",
+      domain: domain,
     });
-    
+
     if (!response.success) {
-      throw new Error(response.error || 'Error creating card');
+      throw new Error(response.error || "Error creating card");
     }
-    
+
     const cardData = response.card;
-    
+
     // Completar campos
-    completarCampo('numero', cardData.number);
-    completarCampo('nombre', cardData.cardholder_name);
-    completarCampo('expiracion', cardData.expiration);
-    completarCampo('cvv', cardData.cvv);
-    
+    completarCampo("numero", cardData.number);
+    completarCampo("nombre", cardData.cardholder_name);
+    completarCampo("expiracion", cardData.expiration);
+    completarCampo("cvv", cardData.cvv);
+
     // Feedback visual
     if (menuActivo) {
       menuActivo.innerHTML = `
@@ -334,15 +336,14 @@ async function crearYAutocompletarNuevaTarjeta(botonElement) {
           <div style="font-size: 12px; color: #666; margin-top: 4px;">•••• ${cardData.last4}</div>
         </div>
       `;
-      
+
       setTimeout(() => {
         ocultarBotones();
       }, 1500);
     }
-    
   } catch (error) {
-    console.error('Error:', error);
-    
+    console.error("Error:", error);
+
     // Mostrar error
     botonElement.innerHTML = `
       <div style="
@@ -361,11 +362,11 @@ async function crearYAutocompletarNuevaTarjeta(botonElement) {
           font-size: 14px;
           font-weight: 500;
           color: #d32f2f;
-        ">${error.message || 'Error'}</div>
+        ">${error.message || "Error"}</div>
       </div>
     `;
-    botonElement.style.cursor = 'pointer';
-    
+    botonElement.style.cursor = "pointer";
+
     setTimeout(() => {
       ocultarBotones();
     }, 3000);
@@ -373,36 +374,40 @@ async function crearYAutocompletarNuevaTarjeta(botonElement) {
 }
 
 function completarCampo(tipoCampo, valor) {
-  const inputs = document.querySelectorAll('input');
-  
+  const inputs = document.querySelectorAll("input");
+
   for (const input of inputs) {
-    const name = (input.name || '').toLowerCase();
-    const id = (input.id || '').toLowerCase();
-    const placeholder = (input.placeholder || '').toLowerCase();
-    const autocomplete = (input.autocomplete || '').toLowerCase();
+    const name = (input.name || "").toLowerCase();
+    const id = (input.id || "").toLowerCase();
+    const placeholder = (input.placeholder || "").toLowerCase();
+    const autocomplete = (input.autocomplete || "").toLowerCase();
     const texto = `${name} ${id} ${placeholder} ${autocomplete}`;
-    
+
     let esElCampo = false;
-    
-    switch(tipoCampo) {
-      case 'numero':
-        esElCampo = texto.match(/card.*number|cardnumber|cc.*number|^number$|^card$/);
+
+    switch (tipoCampo) {
+      case "numero":
+        esElCampo = texto.match(
+          /card.*number|cardnumber|cc.*number|^number$|^card$/,
+        );
         break;
-      case 'nombre':
-        esElCampo = texto.match(/card.*name|cardholder|name.*card|cc.*name|holder/);
+      case "nombre":
+        esElCampo = texto.match(
+          /card.*name|cardholder|name.*card|cc.*name|holder/,
+        );
         break;
-      case 'expiracion':
+      case "expiracion":
         esElCampo = texto.match(/exp|expir|expiry|date/);
         break;
-      case 'cvv':
+      case "cvv":
         esElCampo = texto.match(/cvv|cvc|security.*code|csc|ccv/);
         break;
     }
-    
+
     if (esElCampo) {
       input.value = valor;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
       console.log(`✓ Completado ${tipoCampo}:`, valor);
       break;
     }
@@ -410,9 +415,8 @@ function completarCampo(tipoCampo, valor) {
 }
 
 function ocultarBotones() {
-  botonesActivos.forEach(boton => boton.remove());
+  botonesActivos.forEach((boton) => boton.remove());
   botonesActivos = [];
   menuActivo = null;
-  inputActual = null;
+  _inputActual = null;
 }
-

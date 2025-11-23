@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { enUS } from "date-fns/locale";
+import type { Transaction, VirtualCard } from "@/db/schema";
 import { Badge } from "@/modules/shared/components/ui/badge";
 import {
   Table,
@@ -11,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/modules/shared/components/ui/table";
-import type { Transaction, VirtualCard } from "@/db/schema";
 
 interface TransactionsTableProps {
   transactions: (Transaction & { virtualCard: VirtualCard })[];
@@ -103,7 +103,9 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
                 </TableCell>
                 <TableCell>
                   <Badge
-                    variant={tx.status === "approved" ? "default" : "destructive"}
+                    variant={
+                      tx.status === "approved" ? "default" : "destructive"
+                    }
                     className="capitalize"
                   >
                     {tx.status === "approved" ? "Approved" : tx.status}
@@ -117,4 +119,3 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
     </div>
   );
 }
-

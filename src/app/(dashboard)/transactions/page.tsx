@@ -1,5 +1,6 @@
-import { getUserTransactions } from "@/modules/shared/actions/transaction-actions";
+import type { Metadata } from "next";
 import { listVirtualCards } from "@/modules/shared/actions/card-actions";
+import { getUserTransactions } from "@/modules/shared/actions/transaction-actions";
 import { AdminContainer } from "@/modules/shared/components/admin-container";
 import {
   Card,
@@ -9,6 +10,15 @@ import {
   CardTitle,
 } from "@/modules/shared/components/ui/card";
 import { TransactionsContent } from "@/modules/transactions/components/transactions-content";
+
+export const metadata: Metadata = {
+  title: "Transactions",
+  description: "View all your transactions made with virtual cards.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 interface TransactionsPageProps {
   searchParams: Promise<{ cardId?: string }>;

@@ -87,7 +87,7 @@ export default function SignIn() {
                     router.push("/dashboard");
                     router.refresh();
                   },
-                  onError: (ctx) => {
+                  onError: (_ctx) => {
                     toast.error("Authentication error", {
                       description: "Invalid email or password",
                     });
