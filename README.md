@@ -2,7 +2,7 @@
 
 **Current project logo:** logo-dark.png
 
-<img src="./logo-dark.png" alt="Project Logo" width="200" />
+<img src="./public/logo-dark.png" alt="Project Logo" width="200" />
 
 ## ¿Qué es Shadow?
 
