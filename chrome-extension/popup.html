@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadow Virtual Cards</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 380px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      background: white;
+      min-height: 500px;
+    }
+
+    .header {
+      padding: 32px 24px 24px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #000 0%, #333 100%);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #666;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    /* Login Form */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #1a1a1a;
+      letter-spacing: -0.2px;
+    }
+
+    .form-group input {
+      padding: 12px 14px;
+      border: 1px solid #e5e5e5;
+      font-size: 14px;
+      transition: all 0.2s;
+      font-family: inherit;
+      background: #fafafa;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #1a1a1a;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group input::placeholder {
+      color: #999;
+    }
+
+    .btn {
+      padding: 12px 16px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #1a1a1a;
+      border: 1px solid #e5e5e5;
+    }
+
+    .btn-secondary:hover {
+      background: #ebebeb;
+      border-color: #d5d5d5;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: none;
+    }
+
+    .user-info {
+      background: #fafafa;
+      padding: 16px;
+      margin-bottom: 24px;
+      border: 1px solid #f0f0f0;
+    }
+
+    .user-info h3 {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .user-info p {
+      font-size: 15px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    .cards-section {
+      margin-top: 24px;
+    }
+
+    .cards-section h3 {
+      font-size: 13px;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .cards-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .cards-list::-webkit-scrollbar-track {
+      background: #f5f5f5;
+    }
+
+    .cards-list::-webkit-scrollbar-thumb {
+      background: #d5d5d5;
+    }
+
+    .card-item {
+      background: #fafafa;
+      padding: 12px 14px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #f0f0f0;
+      transition: all 0.15s;
+    }
+
+    .card-item:hover {
+      background: #f5f5f5;
+      border-color: #e5e5e5;
+    }
+
+    .card-item .name {
+      font-weight: 500;
+      color: #1a1a1a;
+      font-size: 13px;
+    }
+
+    .card-item .last4 {
+      color: #666;
+      font-size: 12px;
+      font-family: 'SF Mono', monospace;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 20px;
+      color: #999;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .error {
+      background: #fff1f0;
+      color: #d32f2f;
+      padding: 12px 14px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      border: 1px solid #ffcdd2;
+    }
+
+    .success {
+      background: #f1f8f4;
+      color: #2e7d32;
+      padding: 12px 14px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      border: 1px solid #c8e6c9;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px 24px;
+      color: #999;
+    }
+
+    .spinner {
+      border: 2px solid #f0f0f0;
+      border-top: 2px solid #1a1a1a;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 16px 24px;
+      font-size: 12px;
+      color: #999;
+      border-top: 1px solid #f5f5f5;
+      margin-top: 24px;
+    }
+
+    .footer a {
+      color: #1a1a1a;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Shadow</h1>
+      <p>Virtual cards for secure online payments</p>
+    </div>
+
+    <div class="content">
+      <!-- Loading State -->
+      <div id="loadingState" class="loading">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginView" style="display: none;">
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="you@example.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" id="loginBtn">
+            Sign in
+          </button>
+        </form>
+
+        <div class="footer">
+          Don't have an account? <a href="https://shadow.commet.co/sign-up" target="_blank">Sign up</a>
+        </div>
+      </div>
+
+      <!-- Dashboard (Logged In) -->
+      <div id="dashboardView" class="dashboard">
+        <div class="user-info">
+          <h3>Signed in as</h3>
+          <p id="userName"></p>
+        </div>
+
+        <div class="cards-section">
+          <h3>Recent cards</h3>
+          <div id="cardsList" class="cards-list"></div>
+        </div>
+
+        <button class="btn btn-secondary" id="logoutBtn" style="margin-top: 24px; width: 100%;">
+          Sign out
+        </button>
+
+        <div class="footer">
+          New cards are created automatically when you fill payment forms
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+

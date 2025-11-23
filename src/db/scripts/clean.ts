@@ -1,0 +1,15 @@
+import { reset } from "drizzle-seed";
+import { db, schema } from "../index";
+
+// path to a file with schema you want to reset
+
+async function main() {
+  await reset(db, schema);
+  console.log("✅ Database cleaned successfully");
+  process.exit(0);
+}
+
+main().catch((error) => {
+  console.error("❌ Error cleaning database:", error);
+  process.exit(1);
+});

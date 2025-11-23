@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Shadow Virtual Cards",
+  "version": "1.0",
+  "description": "Crea tarjetas virtuales únicas automáticamente para cada compra",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://shadow.commet.co/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Shadow Virtual Cards"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
+
